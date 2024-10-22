@@ -1,0 +1,42 @@
+version: '3'
+services:
+  frontend:
+    image: docker.io/deneros/optical-tech-front:1.0
+    ports:
+      - "80:80"
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - backend
+    networks:
+      - spring-net
+
+  backend:
+    image: docker.io/deneros/optical-tech-back:1.0
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/optimal
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    depends_on:
+      - postgres
+    networks:
+      - spring-net
+
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: optimal
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - spring-net
+
+networks:
+  spring-net:
+volumes:
+  postgres-data:

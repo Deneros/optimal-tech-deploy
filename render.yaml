@@ -1,0 +1,47 @@
+services:
+  - type: web
+    name: frontend
+    env: static
+    image: docker.io/deneros/optical-tech-front:1.0
+    plan: free
+    healthCheckPath: /
+    ports:
+      - port: 80
+    envVars:
+      - key: NODE_ENV
+        value: production
+    envGroups:
+      - name: frontend-env-group
+
+  - type: web
+    name: backend
+    env: docker
+    image: docker.io/deneros/optical-tech-back:1.0
+    plan: free
+    ports:
+      - port: 8080
+    envVars:
+      - key: SPRING_DATASOURCE_URL
+        value: jdbc:postgresql://postgres:5432/optimal
+      - key: SPRING_DATASOURCE_USERNAME
+        value: root
+      - key: SPRING_DATASOURCE_PASSWORD
+        value: root
+      - key: SPRING_JPA_HIBERNATE_DDL_AUTO
+        value: update
+    databases:
+      - name: postgres-db
+
+  - type: database
+    name: postgres-db
+    plan: starter
+    postgresVersion: 13
+    disk:
+      sizeGB: 10
+    envVars:
+      - key: POSTGRES_DB
+        value: optimal
+      - key: POSTGRES_USER
+        value: root
+      - key: POSTGRES_PASSWORD
+        value: root
